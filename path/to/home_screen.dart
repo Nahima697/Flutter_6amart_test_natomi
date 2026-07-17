@@ -446,8 +446,45 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: Center(
                               child: SizedBox(
                                 width: Dimensions.webMaxWidth,
-                                child: ModuleView(
-                                    splashController: splashController),
+                                child: MasonryGridView.count(
+                                  crossAxisCount: 2,
+                                  mainAxisSpacing: BeytiTheme.gridSpacing,
+                                  crossAxisSpacing: BeytiTheme.gridSpacing,
+                                  itemCount: 6,
+                                  itemBuilder: (context, index) {
+                                    return ItemView(
+                                      item: ItemModel(
+                                        id: index + 1,
+                                        title: [
+                                          'Tajine en céramique',
+                                          'Miel',
+                                          'Savon',
+                                          'Huile d\'olive',
+                                          'Thé',
+                                          'Sel de mer'
+                                        ][index],
+                                        price: [
+                                          12.99,
+                                          5.99,
+                                          3.99,
+                                          7.99,
+                                          4.99,
+                                          2.99
+                                        ][index],
+                                        image: [
+                                          Colors.purple.shade200,
+                                          Colors.orange.shade200,
+                                          Colors.green.shade200,
+                                          Colors.blue.shade200,
+                                          Colors.red.shade200,
+                                          Colors.yellow.shade200
+                                        ][index],
+                                      ),
+                                      isNotification: false,
+                                      placeholder: '',
+                                    );
+                                  },
+                                ),
                               ),
                             )),
                           ],
@@ -508,113 +545,74 @@ class ItemView extends StatelessWidget {
       child: Column(
         children: [
           Expanded(
-            child: MasonryGridView.count(
-              crossAxisCount: 2,
-              mainAxisSpacing: BeytiTheme.gridSpacing,
-              crossAxisSpacing: BeytiTheme.gridSpacing,
-              itemCount: 1,
-              itemBuilder: (context, index) {
-                return Container(
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
-                    borderRadius: BorderRadius.circular(BeytiTheme.cardRadius),
+            child: Container(
+              decoration: BoxDecoration(
+                color: item.image,
+                borderRadius: BorderRadius.circular(BeytiTheme.cardRadius),
+              ),
+              child: Center(
+                child: Text(
+                  item.title,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
                   ),
-                  child: Stack(
-                    children: [
-                      CachedNetworkImage(
-                        imageUrl: item.image!,
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) => Container(
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).cardColor,
-                            borderRadius: BorderRadius.circular(BeytiTheme.cardRadius),
-                          ),
-                          child: Center(
-                            child: Container(
-                              height: 100,
-                              width: 100,
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                  colors: [Colors.black.withOpacity(0.5), Colors.transparent],
-                                ),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  item.title!,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        errorWidget: (context, url, error) => Container(
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).cardColor,
-                            borderRadius: BorderRadius.circular(BeytiTheme.cardRadius),
-                          ),
-                          child: Center(
-                            child: Icon(
-                              Icons.error,
-                              color: Colors.red,
-                              size: 40,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        child: Container(
-                          height: 50,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [Colors.black.withOpacity(0.5), Colors.transparent],
-                            ),
-                            borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(BeytiTheme.cardRadius),
-                              bottomRight: Radius.circular(BeytiTheme.cardRadius),
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                item.title!,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                '\$${item.price}',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              height: 50,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.black.withOpacity(0.5), Colors.transparent],
+                ),
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(BeytiTheme.cardRadius),
+                  bottomRight: Radius.circular(BeytiTheme.cardRadius),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    item.title,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                );
-              },
+                  Text(
+                    '\$${item.price}',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
       ),
     );
   }
+}
+
+class ItemModel {
+  final int id;
+  final String title;
+  final double price;
+  final Color image;
+
+  ItemModel({required this.id, required this.title, required this.price, required this.image});
 }
