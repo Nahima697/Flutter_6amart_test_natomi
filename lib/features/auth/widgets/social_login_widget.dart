@@ -54,8 +54,18 @@ class SocialLoginWidget extends StatelessWidget {
             LoginResult result = await FacebookAuth.instance.login();
             if (result.status == LoginStatus.success) {
               Map userData = await FacebookAuth.instance.getUserData();
+              // Depuis la v6/7, AccessToken est scindé en ClassicToken / LimitedToken,
+              // chacun exposant .tokenString et .userId séparément.
+              final accessToken = result.accessToken!;
+              String? fbToken = accessToken.tokenString;
+              String? fbUserId;
+              if (accessToken is ClassicToken) {
+                fbUserId = accessToken.userId;
+              } else if (accessToken is LimitedToken) {
+                fbUserId = accessToken.userId;
+              }
               Get.find<AuthController>().loginWithSocialMedia(SocialLogInBody(
-                email: userData['email'], token: result.accessToken!.token, uniqueId: result.accessToken!.userId, medium: 'facebook',
+                email: userData['email'], token: fbToken, uniqueId: fbUserId, medium: 'facebook',
               ));
             }
           },

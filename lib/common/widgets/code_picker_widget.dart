@@ -188,6 +188,7 @@ class _CodePickerWidgetState extends State<CodePickerWidget> {
                 hideSearch: widget.hideSearch!,
                 closeIcon: widget.closeIcon,
                 flagDecoration: widget.flagDecoration,
+                hideHeaderText: false,
               ),
             ),
           ),
@@ -224,6 +225,7 @@ class _CodePickerWidgetState extends State<CodePickerWidget> {
             barrierColor: widget.barrierColor,
             hideSearch: widget.hideSearch!,
             closeIcon: widget.closeIcon,
+            hideHeaderText: false,
           ),
         ),
       ).then((e) {

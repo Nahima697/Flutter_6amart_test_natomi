@@ -9,23 +9,26 @@ class NetworkInfo {
   final Connectivity connectivity;
   NetworkInfo(this.connectivity);
 
+  /// connectivity_plus 7.x renvoie une LISTE de résultats (on peut être
+  /// connecté en wifi ET en data en même temps par ex.), donc on vérifie
+  /// qu'elle ne contient pas "none" et qu'elle n'est pas vide.
   Future<bool> get isConnected async {
-    ConnectivityResult result = await connectivity.checkConnectivity();
-    return result != ConnectivityResult.none;
+    final List<ConnectivityResult> result = await connectivity.checkConnectivity();
+    return result.isNotEmpty && !result.contains(ConnectivityResult.none);
   }
 
   static void checkConnectivity(BuildContext context) {
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-      if(Get.find<SplashController>().firstTimeConnectionCheck) {
+    Connectivity().onConnectivityChanged.listen((List<ConnectivityResult> result) {
+      if (Get.find<SplashController>().firstTimeConnectionCheck) {
         Get.find<SplashController>().setFirstTimeConnectionCheck(false);
-      }else {
-        bool isNotConnected = result == ConnectivityResult.none;
+      } else {
+        bool isNotConnected = result.isEmpty || result.contains(ConnectivityResult.none);
         isNotConnected ? const SizedBox() : ScaffoldMessenger.of(context).hideCurrentSnackBar();
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           backgroundColor: isNotConnected ? Colors.red : Colors.green,
           duration: Duration(seconds: isNotConnected ? 6000 : 3),
           content: Text(
-            isNotConnected ? 'no_connection' : 'connected',
+            isNotConnected ? 'no_connection'.tr : 'connected'.tr,
             textAlign: TextAlign.center,
           ),
         ));
@@ -38,15 +41,19 @@ class NetworkInfo {
     final Configuration config = Configuration(
       outputType: ImageOutputType.webpThenPng,
       useJpgPngNativeCompressor: false,
-      quality: (input.sizeInBytes/1048576) < 2 ? 90 : (input.sizeInBytes/1048576) < 5
-          ? 50 : (input.sizeInBytes/1048576) < 10 ? 10 : 1,
+      quality: (input.sizeInBytes / 1048576) < 2
+          ? 90
+          : (input.sizeInBytes / 1048576) < 5
+              ? 50
+              : (input.sizeInBytes / 1048576) < 10
+                  ? 10
+                  : 1,
     );
     final ImageFile output = await compressor.compress(ImageFileConfiguration(input: input, config: config));
-    if(kDebugMode) {
+    if (kDebugMode) {
       print('Input size : ${input.sizeInBytes / 1048576}');
       print('Output size : ${output.sizeInBytes / 1048576}');
     }
     return XFile.fromData(output.rawBytes);
   }
-
 }

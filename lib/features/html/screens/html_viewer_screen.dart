@@ -63,17 +63,19 @@ class _HtmlViewerScreenState extends State<HtmlViewerScreen> {
                       onTapUrl: (String url) {
                         return launchUrlString(url, mode: LaunchMode.externalApplication);
                       },
-                    ) : SelectableHtml(
-                      data: htmlController.htmlText, shrinkWrap: true,
-                      onLinkTap: (String? url, RenderContext context, Map<String, String> attributes, element) {
-                        if(url!.startsWith('www.')) {
-                          url = 'https://$url';
-                        }
-                        if (kDebugMode) {
-                          print('Redirect to url: $url');
-                        }
-                        html.window.open(url, "_blank");
-                      },
+                    ) : SelectionArea(
+                      child: Html(
+                        data: htmlController.htmlText ?? '',
+                        onLinkTap: (url, attributes, element) {
+                          if(url!.startsWith('www.')) {
+                            url = 'https://$url';
+                          }
+                          if (kDebugMode) {
+                            print('Redirect to url: $url');
+                          }
+                          html.window.open(url, "_blank");
+                        },
+                      ),
                     ),
 
                   ]),
